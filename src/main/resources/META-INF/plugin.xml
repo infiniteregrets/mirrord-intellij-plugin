@@ -12,4 +12,11 @@
     <projectListeners>
         <listener class="com.github.infiniteregrets.mirrordintellijplugin.MirrordCustomListener" topic="com.intellij.execution.ExecutionListener"/>
     </projectListeners>
+    <actions>
+        <action id="com.github.infiniteregrets.mirrordintellijplugin.ToggleButton"
+                class="com.github.infiniteregrets.mirrordintellijplugin.ToggleButton" text="Enable/Disable mirrord"
+                description="Toggle the mirrord plugin">
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
