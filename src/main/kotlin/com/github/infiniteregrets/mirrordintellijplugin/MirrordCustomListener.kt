@@ -6,10 +6,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import kotlin.collections.LinkedHashMap
 
 class MirrordCustomListener : ExecutionListener {
-    val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
+    private val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
 
     init {
-        mirrordEnv.put("LD_PRELOAD", "target/debug/libmirrord.so")
+        mirrordEnv.put("DYLD_INSERT_LIBRARIES", "target/debug/libmirrord_layer.dylib")
         mirrordEnv.put("RUST_LOG", "DEBUG")
         mirrordEnv.put("MIRRORD_AGENT_IMPERSONATED_POD_NAME", "nginx-deployment-66b6c48dd5-ggd9n")
         mirrordEnv.put("MIRRORD_ACCEPT_INVALID_CERTIFICATES", "true")
@@ -27,8 +27,9 @@ class MirrordCustomListener : ExecutionListener {
 
     override fun processTerminating(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
         if (enabled) {
+            var envMap = getPythonEnv(env)
             for (key in mirrordEnv.keys) {
-                mirrordEnv.remove(key)
+                envMap.remove(key)
             }
         }
         super.processTerminating(executorId, env, handler)
