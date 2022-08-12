@@ -13,15 +13,21 @@ import javax.swing.JPanel
 class CustomDialog : DialogWrapper(true){
     init {
         init()
-        title = "Sample Dialog"
+        title = "Mirrord"
     }
+
+    private var jlistPods: JList<String> = JList(MirrordCustomListener.pods.toArray() as Array<String>)
     override fun createCenterPanel(): JComponent? {
         val dialogPanel = JPanel(BorderLayout())
         val label = JLabel("Select pod to impersonate")
         label.preferredSize = Dimension(100, 100)
         dialogPanel.add(label, BorderLayout.NORTH)
-        val data = arrayOf("one", "two", "three", "four")
-        dialogPanel.add(JList(data), BorderLayout.CENTER)
+        dialogPanel.add(jlistPods, BorderLayout.CENTER)
         return dialogPanel
     }
+
+    fun getSelected(): String {
+        return jlistPods.selectedValue
+    }
+
 }

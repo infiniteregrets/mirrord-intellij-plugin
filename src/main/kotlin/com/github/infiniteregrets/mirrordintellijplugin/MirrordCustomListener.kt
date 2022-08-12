@@ -9,10 +9,14 @@ import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.util.Config
+import java.awt.BorderLayout
 import java.awt.Point
+import javax.swing.JList
+import javax.swing.JPanel
 
 class MirrordCustomListener : ExecutionListener {
     private val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
+    private val namespace: String = "default"
 
     init {
         mirrordEnv["DYLD_INSERT_LIBRARIES"] = "target/debug/libmirrord_layer.dylib"
@@ -22,18 +26,18 @@ class MirrordCustomListener : ExecutionListener {
     }
     companion object {
         var enabled: Boolean = false
+        lateinit var pods: ArrayList<String>
     }
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
         if (enabled) {
-            var envMap = getPythonEnv(env)
-            val pods = getKubeData("default")
-
-//            JBPopupFactory
-//                    .getInstance()
-//                    .createListPopup(PopUpMenu("Select a pod to impersonate", pods))
-//                    .show(RelativePoint.fromScreen(Point(600, 200)))
-            val response = CustomDialog().showAndGet()
-            envMap.putAll(mirrordEnv)
+            pods = getKubeData(namespace)
+            var dialog = CustomDialog()
+            val response = dialog.showAndGet()
+            var selected = dialog.getSelected()
+            if (response) {
+                var envMap = getPythonEnv(env)
+                envMap.putAll(mirrordEnv)
+            }
         }
         super.processStarting(executorId, env)
     }
