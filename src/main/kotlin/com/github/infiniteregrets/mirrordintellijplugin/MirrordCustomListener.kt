@@ -6,6 +6,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
@@ -13,7 +14,9 @@ import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.util.Config
+import java.awt.Dimension
 import java.awt.Point
+import javax.swing.ListSelectionModel.SINGLE_SELECTION
 
 class MirrordCustomListener : ExecutionListener {
     private val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
@@ -31,7 +34,18 @@ class MirrordCustomListener : ExecutionListener {
         if (enabled) {
             var envMap = getPythonEnv(env)
             val pods = getKubeData("default")
-            var x = JBPopupFactory.getInstance().createPopupChooserBuilder(pods).createPopup().show(RelativePoint.fromScreen(Point(500,500)))
+            var fac = JBPopupFactory
+                    .getInstance()
+                    .createListPopup(PopUpMenu("Select a pod to impersonate", pods))
+                    .show(RelativePoint.fromScreen(Point(600, 200)))
+//            var fac = JBPopupFactory
+//                    .getInstance()
+//                    .createPopupChooserBuilder(pods)
+//                    .setTitle("Select a pod to impersonate")
+//                    .setSelectionMode(SINGLE_SELECTION)
+//                    .setMinSize(Dimension(100, 100))
+//                    .createPopup()
+//                    .show(RelativePoint.fromScreen(Point(600,200)))
 
             envMap.putAll(mirrordEnv)
         }
