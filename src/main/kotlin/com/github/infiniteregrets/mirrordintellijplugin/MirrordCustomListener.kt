@@ -3,6 +3,9 @@ package com.github.infiniteregrets.mirrordintellijplugin
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -14,6 +17,9 @@ import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.util.Config
+import javafx.application.Application
+import okhttp3.internal.notify
+import okhttp3.internal.wait
 import java.awt.Dimension
 import java.awt.Point
 import javax.swing.ListSelectionModel.SINGLE_SELECTION
@@ -34,19 +40,23 @@ class MirrordCustomListener : ExecutionListener {
         if (enabled) {
             var envMap = getPythonEnv(env)
             val pods = getKubeData("default")
-            var fac = JBPopupFactory
+
+            JBPopupFactory
                     .getInstance()
                     .createListPopup(PopUpMenu("Select a pod to impersonate", pods))
                     .show(RelativePoint.fromScreen(Point(600, 200)))
-//            var fac = JBPopupFactory
+
+//            JBPopupFactory
 //                    .getInstance()
 //                    .createPopupChooserBuilder(pods)
+//                    .setItemSelectedCallback {
+//
+//                    }
 //                    .setTitle("Select a pod to impersonate")
 //                    .setSelectionMode(SINGLE_SELECTION)
 //                    .setMinSize(Dimension(100, 100))
 //                    .createPopup()
 //                    .show(RelativePoint.fromScreen(Point(600,200)))
-
             envMap.putAll(mirrordEnv)
         }
         super.processStarting(executorId, env)
