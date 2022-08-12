@@ -3,15 +3,17 @@ package com.github.infiniteregrets.mirrordintellijplugin
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.ListPopupStep
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.ui.components.JBList
+import com.intellij.openapi.wm.StatusBar
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.awt.RelativePoint
 import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.util.Config
-import javax.swing.JList
+import java.awt.Point
 
 class MirrordCustomListener : ExecutionListener {
     private val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
@@ -29,8 +31,8 @@ class MirrordCustomListener : ExecutionListener {
         if (enabled) {
             var envMap = getPythonEnv(env)
             val pods = getKubeData("default")
-            var menu = PopUpMenu("hello", pods)
-            JBPopupFactory.getInstance().createListPopup(menu, 4)
+            var x = JBPopupFactory.getInstance().createPopupChooserBuilder(pods).createPopup().show(RelativePoint.fromScreen(Point(500,500)))
+
             envMap.putAll(mirrordEnv)
         }
         super.processStarting(executorId, env)
