@@ -3,16 +3,18 @@ package com.github.infiniteregrets.mirrordintellijplugin
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.ui.awt.RelativePoint
+import com.intellij.openapi.ui.DialogBuilder
+import com.intellij.openapi.ui.DialogWrapper
 import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.util.Config
 import java.awt.BorderLayout
-import java.awt.Point
+import java.awt.Dimension
+import javax.swing.JLabel
 import javax.swing.JList
 import javax.swing.JPanel
+
 
 class MirrordCustomListener : ExecutionListener {
     private val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
@@ -26,14 +28,23 @@ class MirrordCustomListener : ExecutionListener {
     }
     companion object {
         var enabled: Boolean = false
-        lateinit var pods: ArrayList<String>
     }
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
         if (enabled) {
-            pods = getKubeData(namespace)
-            var dialog = CustomDialog()
-            val response = dialog.showAndGet()
-            var selected = dialog.getSelected()
+
+            var dialogBuilder = DialogBuilder()
+
+            val dialogPanel = JPanel(BorderLayout())
+            val label = JLabel("Select pod to impersonate")
+            label.preferredSize = Dimension(100, 100)
+            dialogPanel.add(label, BorderLayout.NORTH)
+            var pods = getKubeData("default")
+            dialogPanel.add(JList(pods.toArray()), BorderLayout.CENTER)
+
+            dialogBuilder.setCenterPanel(dialogPanel)
+            dialogBuilder.setTitle("Mirrord")
+
+            val response = dialogBuilder.show() === DialogWrapper.OK_EXIT_CODE
             if (response) {
                 var envMap = getPythonEnv(env)
                 envMap.putAll(mirrordEnv)
@@ -57,18 +68,18 @@ class MirrordCustomListener : ExecutionListener {
         return envMethod.invoke(env.runProfile) as LinkedHashMap<String, String>
     }
 
-    private  fun getKubeData(namespace: String): ArrayList<String> {
-        var client: ApiClient = Config.defaultClient()
-        Configuration.setDefaultApiClient(client)
+}
 
-        val api = CoreV1Api()
-        val pods = api.listNamespacedPod("default", null, null, null, null, null, null, null, null, null,null)
+private  fun getKubeData(namespace: String): ArrayList<String> {
+    var client: ApiClient = Config.defaultClient()
+    Configuration.setDefaultApiClient(client)
 
-        var list = ArrayList<String>()
-        for (pod in pods.items) {
-            list.add(pod.metadata!!.name!!);
-        }
-        return list
+    val api = CoreV1Api()
+    val pods = api.listNamespacedPod("default", null, null, null, null, null, null, null, null, null,null)
+
+    var list = ArrayList<String>()
+    for (pod in pods.items) {
+        list.add(pod.metadata!!.name!!);
     }
-
+    return list
 }
