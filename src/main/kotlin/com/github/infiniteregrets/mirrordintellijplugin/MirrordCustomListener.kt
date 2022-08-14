@@ -39,13 +39,16 @@ class MirrordCustomListener : ExecutionListener {
             label.preferredSize = Dimension(100, 100)
             dialogPanel.add(label, BorderLayout.NORTH)
             var pods = getKubeData("default")
-            dialogPanel.add(JList(pods.toArray()), BorderLayout.CENTER)
+            val jlistPods = JList(pods.toArray())
+            dialogPanel.add(jlistPods, BorderLayout.CENTER)
 
             dialogBuilder.setCenterPanel(dialogPanel)
             dialogBuilder.setTitle("Mirrord")
 
             val response = dialogBuilder.show() === DialogWrapper.OK_EXIT_CODE
             if (response) {
+                val selectedPod = jlistPods.selectedValue as String
+                mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = selectedPod
                 var envMap = getPythonEnv(env)
                 envMap.putAll(mirrordEnv)
             }
