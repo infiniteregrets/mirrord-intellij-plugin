@@ -5,6 +5,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.components.JBList
 import io.kubernetes.client.openapi.ApiClient
 import io.kubernetes.client.openapi.Configuration
 import io.kubernetes.client.openapi.apis.CoreV1Api
@@ -16,30 +17,31 @@ import javax.swing.JList
 import javax.swing.JPanel
 
 
-class MirrordCustomListener : ExecutionListener {
+class MirrordListener : ExecutionListener {
     private val mirrordEnv: LinkedHashMap<String, String> = LinkedHashMap()
-    private val namespace: String = "default"
 
     init {
         mirrordEnv["DYLD_INSERT_LIBRARIES"] = "target/debug/libmirrord_layer.dylib"
+        mirrordEnv["LD_PRELOAD"] = "target/debug/libmirrord_layer.dylib"
         mirrordEnv["RUST_LOG"] = "DEBUG"
         mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = "nginx-deployment-66b6c48dd5-ggd9n"
         mirrordEnv["MIRRORD_ACCEPT_INVALID_CERTIFICATES"] = "true"
     }
+
     companion object {
         var enabled: Boolean = false
     }
+
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
         if (enabled) {
-
             var dialogBuilder = DialogBuilder()
-
             val dialogPanel = JPanel(BorderLayout())
+
             val label = JLabel("Select pod to impersonate")
             label.preferredSize = Dimension(100, 100)
             dialogPanel.add(label, BorderLayout.NORTH)
             var pods = getKubeData("default")
-            val jlistPods = JList(pods.toArray())
+            val jlistPods = JBList(pods.toArray())
             dialogPanel.add(jlistPods, BorderLayout.CENTER)
 
             dialogBuilder.setCenterPanel(dialogPanel)
@@ -73,12 +75,12 @@ class MirrordCustomListener : ExecutionListener {
 
 }
 
-private  fun getKubeData(namespace: String): ArrayList<String> {
+private fun getKubeData(namespace: String): ArrayList<String> {
     var client: ApiClient = Config.defaultClient()
     Configuration.setDefaultApiClient(client)
 
     val api = CoreV1Api()
-    val pods = api.listNamespacedPod("default", null, null, null, null, null, null, null, null, null,null)
+    val pods = api.listNamespacedPod("default", null, null, null, null, null, null, null, null, null, null)
 
     var list = ArrayList<String>()
     for (pod in pods.items) {

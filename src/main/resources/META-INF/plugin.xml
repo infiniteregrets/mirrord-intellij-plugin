@@ -8,10 +8,13 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Mirrord Notification Handler"
+                           displayType="TOOL_WINDOW"/>
     </extensions>
 
     <projectListeners>
-        <listener class="com.github.infiniteregrets.mirrordintellijplugin.MirrordCustomListener" topic="com.intellij.execution.ExecutionListener"/>
+        <listener class="com.github.infiniteregrets.mirrordintellijplugin.MirrordListener"
+                  topic="com.intellij.execution.ExecutionListener"/>
     </projectListeners>
     <actions>
         <action id="com.github.infiniteregrets.mirrordintellijplugin.ToggleButton"
