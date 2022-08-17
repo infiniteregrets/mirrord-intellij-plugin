@@ -9,7 +9,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="Mirrord Notification Handler"
-                           displayType="TOOL_WINDOW"/>
+                           displayType="BALLOON"/>
     </extensions>
 
     <projectListeners>
