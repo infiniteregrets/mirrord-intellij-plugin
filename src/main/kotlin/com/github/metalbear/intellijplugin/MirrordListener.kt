@@ -5,7 +5,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.DialogWrapper
-import javax.swing.JList
+import com.intellij.ui.components.JBList
 
 
 class MirrordListener : ExecutionListener {
@@ -32,7 +32,7 @@ class MirrordListener : ExecutionListener {
             val kubeDataProvider = KubeDataProvider()
             var pods = kubeDataProvider.getKubeData("default")
 
-            val jlistPods = JList(pods.toArray())
+            val jlistPods = JBList<String>(pods)
 
             var dialogBuilder = MirrordDialogBuilder().createDialog(jlistPods)
 

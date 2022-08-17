@@ -1,15 +1,15 @@
 package com.github.metalbear.intellijplugin
 
 import com.intellij.openapi.ui.DialogBuilder
+import com.intellij.ui.components.JBList
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.JLabel
-import javax.swing.JList
 import javax.swing.JPanel
 
 class MirrordDialogBuilder {
 
-    fun createDialog(jlistPods: JList<Any>): DialogBuilder {
+    fun createDialog(jlistPods: JBList<String>): DialogBuilder {
         var dialogBuilder = DialogBuilder()
         val dialogPanel = JPanel(BorderLayout())
 
