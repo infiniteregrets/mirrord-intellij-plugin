@@ -1,4 +1,4 @@
-package com.github.infiniteregrets.mirrordintellijplugin
+package com.github.metalbear.intellijplugin
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.actionSystem.AnActionEvent

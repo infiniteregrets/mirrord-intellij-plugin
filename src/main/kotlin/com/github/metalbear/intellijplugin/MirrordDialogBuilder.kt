@@ -1,4 +1,4 @@
-package com.github.infiniteregrets.mirrordintellijplugin
+package com.github.metalbear.intellijplugin
 
 import com.intellij.openapi.ui.DialogBuilder
 import java.awt.BorderLayout
