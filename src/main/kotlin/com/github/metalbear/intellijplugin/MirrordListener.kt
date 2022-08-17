@@ -6,6 +6,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBList
+import javax.swing.JCheckBox
 
 
 class MirrordListener : ExecutionListener {
@@ -30,18 +31,23 @@ class MirrordListener : ExecutionListener {
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
         if (enabled) {
             val kubeDataProvider = KubeDataProvider()
-            var pods = kubeDataProvider.getKubeData("default")
+            val pods = JBList<String>(kubeDataProvider.getKubeData("default"))
 
-            val jlistPods = JBList<String>(pods)
+            val fileOpsCheckbox = JCheckBox("Enable File Operations")
+            val remoteDnsCheckbox = JCheckBox("Enable Remote DNS")
 
-            var dialogBuilder = MirrordDialogBuilder().createDialog(jlistPods)
+            var dialogBuilder = MirrordDialogBuilder().createDialog(pods, fileOpsCheckbox, remoteDnsCheckbox)
 
             val response = dialogBuilder.show() == DialogWrapper.OK_EXIT_CODE
             if (response) {
-                val selectedPod = jlistPods.selectedValue as String
-                mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = selectedPod
+
+                mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = pods.selectedValue as String
+                mirrordEnv["MIRRORD_FILE_OPS"] = fileOpsCheckbox.isSelected.toString()
+                mirrordEnv["MIRRORD_REMOTE_DNS"] = remoteDnsCheckbox.isSelected.toString()
+
                 var envMap = getPythonEnv(env)
                 envMap.putAll(mirrordEnv)
+
                 log.debug("mirrord env set")
                 envSet = true
             }
