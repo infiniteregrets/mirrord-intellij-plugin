@@ -24,6 +24,7 @@ class MirrordListener : ExecutionListener {
 
     companion object {
         var enabled: Boolean = false
+        var envSet: Boolean = false
     }
 
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
@@ -41,22 +42,28 @@ class MirrordListener : ExecutionListener {
                 mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = selectedPod
                 var envMap = getPythonEnv(env)
                 envMap.putAll(mirrordEnv)
+                log.debug("mirrord env set")
+                envSet = true
             }
         }
         super.processStarting(executorId, env)
     }
 
     override fun processTerminating(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
-        if (enabled) {
+        if (enabled and envSet) {
             var envMap = getPythonEnv(env)
             for (key in mirrordEnv.keys) {
-                envMap.remove(key)
+                if (mirrordEnv.containsKey(key)) {
+                    envMap.remove(key)
+                }
             }
+            log.debug("mirrord env reset")
         }
         super.processTerminating(executorId, env, handler)
     }
 
     private fun getPythonEnv(env: ExecutionEnvironment): LinkedHashMap<String, String> {
+        log.debug("fetching python env")
         var envMethod = env.runProfile.javaClass.getMethod("getEnvs")
         return envMethod.invoke(env.runProfile) as LinkedHashMap<String, String>
     }
