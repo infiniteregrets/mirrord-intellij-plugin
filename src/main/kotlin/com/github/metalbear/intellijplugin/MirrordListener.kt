@@ -15,7 +15,7 @@ class MirrordListener : ExecutionListener {
 
     init {
         mirrordEnv["DYLD_INSERT_LIBRARIES"] = "target/debug/libmirrord_layer.dylib"
-        mirrordEnv["LD_PRELOAD"] = "target/debug/libmirrord_layer.dylib"
+        mirrordEnv["LD_PRELOAD"] = "target/debug/libmirrord_layer.so"
         mirrordEnv["RUST_LOG"] = "DEBUG"
         mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = "nginx-deployment-66b6c48dd5-ggd9n"
         mirrordEnv["MIRRORD_ACCEPT_INVALID_CERTIFICATES"] = "true"
