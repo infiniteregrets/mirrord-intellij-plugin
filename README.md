@@ -15,11 +15,14 @@
 - [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+mirrord works by letting you select a pod to mirror traffic from. It launches a privileged pod on the same node which enters the namespace of the selected pod and captures traffic from it.
+### How To Use
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
-
-To keep everything working, do not remove `<!-- ... -->` sections. 
+* Click "Enable/Disable mirrord" toggle button on the run tool window.
+* Start debugging your project
+* Choose pod to mirror traffic from, select and configure mirrord options.
+* The debugged process will start with mirrord, and receive traffic.
+ 
 <!-- Plugin description end -->
 
 ## Installation
