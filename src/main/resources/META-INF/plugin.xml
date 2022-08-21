@@ -9,6 +9,7 @@
       It launches a privileged pod on the same node which enters the namespace of the selected pod and captures traffic from it.
     ]]></description>
 
+    <depends>com.intellij.modules.lang</depends>
 <!--    <depends>com.intellij.modules.python</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">

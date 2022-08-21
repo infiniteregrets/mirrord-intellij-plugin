@@ -31,31 +31,45 @@ class MirrordListener : ExecutionListener {
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
         if (enabled) {
             val kubeDataProvider = KubeDataProvider()
-            val pods = JBList<String>(kubeDataProvider.getKubeData("default"))
 
-            val fileOpsCheckbox = JCheckBox("Enable File Operations")
-            val remoteDnsCheckbox = JCheckBox("Enable Remote DNS")
+            // Prompt the user to choose a namespace
+            val namespaces = JBList(kubeDataProvider.getNamespaces())
+            var customDialogBuilder = MirrordDialogBuilder()
+            val panel = customDialogBuilder.createMirrordNamespaceDialog(namespaces)
+            var dialogBuilder = customDialogBuilder.getDialogBuilder(panel)
 
-            var dialogBuilder = MirrordDialogBuilder().createDialog(pods, fileOpsCheckbox, remoteDnsCheckbox)
+            // SUCCESS: Ask the user for the impersonated pod in the chosen namespace
+            if (dialogBuilder.show() == DialogWrapper.OK_EXIT_CODE) {
+                val choseNamespace = namespaces.selectedValue
+                val pods = JBList(kubeDataProvider.getNameSpacedPods(choseNamespace))
+                val fileOpsCheckbox = JCheckBox("Enable File Operations")
+                val remoteDnsCheckbox = JCheckBox("Enable Remote DNS")
+                val panel = customDialogBuilder.createMirrordKubeDialog(pods, fileOpsCheckbox, remoteDnsCheckbox)
 
-            val response = dialogBuilder.show() == DialogWrapper.OK_EXIT_CODE
-            if (response) {
+                var dialogBuilder = customDialogBuilder.getDialogBuilder(panel)
 
-                mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = pods.selectedValue as String
-                mirrordEnv["MIRRORD_FILE_OPS"] = fileOpsCheckbox.isSelected.toString()
-                mirrordEnv["MIRRORD_REMOTE_DNS"] = remoteDnsCheckbox.isSelected.toString()
+                // SUCCESS: set the respective environment variables
+                if (dialogBuilder.show() == DialogWrapper.OK_EXIT_CODE) {
+                    mirrordEnv["MIRRORD_AGENT_IMPERSONATED_POD_NAME"] = pods.selectedValue as String
+                    mirrordEnv["MIRRORD_FILE_OPS"] = fileOpsCheckbox.isSelected.toString()
+                    mirrordEnv["MIRRORD_REMOTE_DNS"] = remoteDnsCheckbox.isSelected.toString()
 
-                var envMap = getPythonEnv(env)
-                envMap.putAll(mirrordEnv)
+                    var envMap = getPythonEnv(env)
+                    envMap.putAll(mirrordEnv)
 
-                log.debug("mirrord env set")
-                envSet = true
+                    log.debug("mirrord env set")
+                    envSet = true
+                }
             }
         }
+        // FAILURE: Just call the parent implementation
         super.processStarting(executorId, env)
     }
 
     override fun processTerminating(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
+        // NOTE: If the option was enabled, and we actually set the env, i.e. cancel was not clicked on the dialog,
+        // we clear up the Environment, because we don't want mirrord to run again if the user hits debug again
+        // with mirrord toggled off.
         if (enabled and envSet) {
             var envMap = getPythonEnv(env)
             for (key in mirrordEnv.keys) {
