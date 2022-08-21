@@ -26,7 +26,7 @@ class MirrordDialogBuilder {
         dialogPanel.add(podPanel, BorderLayout.WEST)
 
         dialogPanel.add(JSeparator(JSeparator.VERTICAL),
-                BorderLayout.CENTER);
+                BorderLayout.CENTER)
 
         val checkBoxPanel = JPanel(GridLayout(2, 1, 10, 2))
         checkBoxPanel.add(fileOpsCheckbox)
@@ -49,7 +49,7 @@ class MirrordDialogBuilder {
     }
 
     fun getDialogBuilder(dialogPanel: JPanel): DialogBuilder {
-        var dialogBuilder = DialogBuilder()
+        val dialogBuilder = DialogBuilder()
 
         dialogBuilder.setCenterPanel(dialogPanel)
         dialogBuilder.setTitle(heading)
