@@ -49,9 +49,10 @@ class MirrordListener : ExecutionListener {
 
                 val fileOpsCheckbox = JCheckBox("Enable File Operations")
                 val remoteDnsCheckbox = JCheckBox("Enable Remote DNS")
-                val agentRustLog = JTextField("DEBUG")
+                val agentRustLog = JTextField(mirrordEnv["MIRRORD_AGENT_RUST_LOG"])
+                val rustLog = JTextField(mirrordEnv["RUST_LOG"])
 
-                val panel = customDialogBuilder.createMirrordKubeDialog(pods, fileOpsCheckbox, remoteDnsCheckbox, agentRustLog)
+                val panel = customDialogBuilder.createMirrordKubeDialog(pods, fileOpsCheckbox, remoteDnsCheckbox, agentRustLog, rustLog)
                 val dialogBuilder = customDialogBuilder.getDialogBuilder(panel)
 
                 // SUCCESS: set the respective environment variables
