@@ -14,7 +14,7 @@ class ToggleButton : ToggleAction() {
     override fun setSelected(e: AnActionEvent, state: Boolean) {
         val notificationManager = NotificationGroupManager
                 .getInstance()
-                .getNotificationGroup("Mirrord Notification Handler")
+                .getNotificationGroup("mirrord Notification Handler")
         if (state) {
             notificationManager
                     .createNotification("mirrord", "mirrord configuration is active, current project will run in context of the remote pod when debugged")
