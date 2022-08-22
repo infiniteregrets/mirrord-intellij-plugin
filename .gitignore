@@ -2,3 +2,4 @@
 .idea
 .qodana
 build
+libmirrord_layer.dylib

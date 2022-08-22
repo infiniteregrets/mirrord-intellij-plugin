@@ -94,6 +94,14 @@ tasks {
         )
     }
 
+    prepareSandbox {
+        doLast {
+            copy {
+                from(file("$projectDir/libmirrord_layer.dylib"))
+                into(file("$buildDir/idea-sandbox/config"))
+            }
+        }
+    }
     // Configure UI tests plugin
     // Read more: https://github.com/JetBrains/intellij-ui-test-robot
     runIdeForUiTests {
