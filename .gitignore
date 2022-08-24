@@ -4,3 +4,5 @@
 build
 libmirrord_layer.dylib
 libmirrord_layer.so
+chain.crt
+private.pem

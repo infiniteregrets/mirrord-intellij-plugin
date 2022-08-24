@@ -46,10 +46,10 @@ intellij {
 }
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
-changelog {
-    version.set(properties("pluginVersion"))
-    groups.set(emptyList())
-}
+//changelog {
+//    version.set(properties("pluginVersion"))
+//    groups.set(emptyList())
+//}
 
 // Configure Gradle Qodana Plugin - read more: https://github.com/JetBrains/gradle-qodana-plugin
 qodana {
@@ -118,7 +118,7 @@ tasks {
     }
 
     publishPlugin {
-        dependsOn("patchChangelog")
+//        dependsOn("patchChangelog")
         token.set(System.getenv("PUBLISH_TOKEN"))
         // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
