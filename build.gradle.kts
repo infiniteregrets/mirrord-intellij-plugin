@@ -100,11 +100,11 @@ tasks {
                 from(file("$projectDir/libmirrord_layer.dylib"))
                 into(file("$buildDir/idea-sandbox/config"))
             }
+            copy {
+                from(file("$projectDir/libmirrord_layer.so"))
+                into(file("$buildDir/idea-sandbox/config"))
+            }
         }
-    }
-
-    runPluginVerifier {
-        ideVersions.set(properties("pluginVerifierIdeVersions").split(',').map(String::trim).filter(String::isNotEmpty))
     }
 
     // Configure UI tests plugin
